@@ -56,3 +56,18 @@ Use the docker image and run via api.
     docker run  --name mynewapi -p 5000:5000 -p 5001:5001 -e ASPNETCORE_ENVIRONMENT=Development -e ASPNETCORE_HTTP_PORT=http://:+5001 -e ASPNETCORE_URLS=http://+:5000 excel:latest
 
 ![Capturar](https://user-images.githubusercontent.com/7238977/210172547-84506608-918d-4c75-b203-ad5aa3916c89.PNG)
+
+## Download Result
+![excel](https://user-images.githubusercontent.com/7238977/210172653-410df30c-3d0a-4cd7-8e19-a8d2cd9183f8.PNG)
+
+## Custom Header Column Attr
+
+    [ExcelColumnAttr("My Value")]
+    public int Value { get; set; }
+
+
+![Attr](https://user-images.githubusercontent.com/7238977/210172710-a5f8911a-d7fd-49b7-8aa3-9b050ee9e495.PNG)
+
+
+
+
