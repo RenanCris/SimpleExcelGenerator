@@ -22,7 +22,7 @@ namespace SimpleExcelGenerator.Model
 
         public override string ToString()
         {
-            return $"Size: {this.Size}, Size Descption {this.SizeToString}, TotalMilliseconds: {this.TimeGenerate.TotalMilliseconds}";
+            return $"Size: {this.Size}, Size Description {this.SizeToString}, TotalMilliseconds: {this.TimeGenerate.TotalMilliseconds}";
         }
 
         public ExcelResultResponse ToResponse()
