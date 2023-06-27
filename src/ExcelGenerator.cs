@@ -13,18 +13,11 @@ using System.Threading.Tasks;
 
 namespace SimpleExcelGenerator
 {
-    public class ExcelGenerator : IExcelGenerator
+    public class ExcelGenerator : ExcelGeneratorBase , IExcelGenerator
     {
-        public IList<Tuple<string, IEnumerable<object>>> ExcelGenerators { get; private set; }
-        private DataSet _dataSetAllValues;
         private bool disposedValue;
-
-        private readonly IExecutionControlTime _executionControlTime;
-
-        public ExcelGenerator(IExecutionControlTime executionControlTime)
+        public ExcelGenerator(IExecutionControlTime executionControlTime) : base(executionControlTime)
         {
-            _executionControlTime = executionControlTime;
-            ExcelGenerators = new List<Tuple<string, IEnumerable<object>>>();
         }
 
         public IExcelGenerator AddSheet(string name, IEnumerable<object> data)
@@ -36,26 +29,6 @@ namespace SimpleExcelGenerator
             return this;
         }
 
-        private void SetupDataSet()
-        {
-            _dataSetAllValues = new DataSet();
-            
-            foreach (var configData in ExcelGenerators)
-            {
-                var (nameTable, data) = configData;
-
-                _dataSetAllValues.Tables.Add(data.ToDataTable(nameTable));
-            }
-
-            ValidExecution();
-        }
-
-        private void ValidExecution() 
-        {
-            if (_dataSetAllValues.Tables.Count == 0)
-                throw new ArgumentException("ExcelGenerator is invalid, not set sheet in instance from this object.");
-        }
-
         public async Task<ExcelResult> GenerateAsync(CancellationToken cancellationToken = default)
         {
             try
@@ -64,22 +37,21 @@ namespace SimpleExcelGenerator
 
                 var completTime = await _executionControlTime.ExecuteAsync(async () =>
                 {
-                    SetupDataSet();
+                    bytes = await ExecuteBaseAsync(async () =>
+                    {
+                        using var stream = new MemoryStream();
+                        await stream.SaveAsAsync(value: _dataSetAllValues, excelType: ExcelType.XLSX, cancellationToken: cancellationToken);
 
-                    using var stream = new MemoryStream();
-                    await stream.SaveAsAsync(value: _dataSetAllValues, excelType: ExcelType.XLSX, cancellationToken: cancellationToken);
-
-                    bytes = stream?.ToArray();
+                        return stream?.ToArray();
+                    });
                 });
-                
-                ExcelGenerators.Clear();
 
                 return new ExcelResult(completTime, bytes);
 
             }
-            catch
+            catch(Exception ex)
             {
-                throw;
+                throw new SimpleExcelCustomException("[GenerateAsync] Error!", ex);
             }
         }
 
@@ -91,22 +63,21 @@ namespace SimpleExcelGenerator
 
                 var completTime = _executionControlTime.Execute(() =>
                 {
-                    SetupDataSet();
+                    bytes = ExecuteBaseSync(() =>
+                    {
+                        using var stream = new MemoryStream();
+                        stream.SaveAs(value: _dataSetAllValues, excelType: ExcelType.XLSX);
 
-                    using var stream = new MemoryStream();
-                    stream.SaveAs(value: _dataSetAllValues, excelType: ExcelType.XLSX);
-
-                    bytes = stream.ToArray();
+                        return stream.ToArray();
+                    });
                 });
-
-                ExcelGenerators.Clear();
 
                 return new ExcelResult(completTime, bytes);
 
             }
-            catch
+            catch (Exception ex)
             {
-                throw;
+                throw new SimpleExcelCustomException("[GenerateSync] Error!", ex);
             }
         }
 
@@ -117,9 +88,9 @@ namespace SimpleExcelGenerator
                 var result = await GenerateAsync(cancellationToken);
                 return result?.Content;
             }
-            catch
+            catch (Exception ex)
             {
-                throw;
+                throw new SimpleExcelCustomException("[GetBytesAsync] Error!", ex);
             }
         }
 
@@ -127,14 +98,14 @@ namespace SimpleExcelGenerator
         {
             try
             {
-                SetupDataSet();
-                await MiniExcel.SaveAsAsync(path, value: _dataSetAllValues, excelType: ExcelType.XLSX, cancellationToken: cancellationToken);
-
-                ExcelGenerators.Clear();
+                await ExecuteBaseAsync(async () =>
+                {
+                    await MiniExcel.SaveAsAsync(path, value: _dataSetAllValues, excelType: ExcelType.XLSX, cancellationToken: cancellationToken);
+                });
             }
-            catch
+            catch (Exception ex)
             {
-                throw;
+                throw new SimpleExcelCustomException("[SaveAsync] Error!", ex);
             }
         }
 
@@ -142,14 +113,11 @@ namespace SimpleExcelGenerator
         {
             try
             {
-                SetupDataSet();
-                MiniExcel.SaveAs(path, value: _dataSetAllValues, excelType: ExcelType.XLSX);
-
-                ExcelGenerators.Clear();
+                ExecuteBaseSync(() => MiniExcel.SaveAs(path, value: _dataSetAllValues, excelType: ExcelType.XLSX));
             }
-            catch
+            catch (Exception ex)
             {
-                throw;
+                throw new SimpleExcelCustomException("[SaveSync] Error!", ex);
             }
         }
 
