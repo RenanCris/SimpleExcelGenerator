@@ -6,6 +6,9 @@
     <Authors>Renan Nunes</Authors>
     <Company>Renan Nunes</Company>
     <Description>Simple wrapper excel generator, based package in MiniExcel</Description>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <Version>1.0.1</Version>
+    <PackageProjectUrl>https://github.com/RenanCris/SimpleExcelGenerator</PackageProjectUrl>
   </PropertyGroup>
   
   <ItemGroup>

@@ -15,13 +15,13 @@ namespace SimpleExcelGenerator.Helper
         public static DataTable ToDataTable<T>(this IEnumerable<T> data, string name)
         {
             PropertyDescriptorCollection properties =
-                TypeDescriptor.GetProperties(data.First().GetType());
+                TypeDescriptor.GetProperties(data?.First().GetType());
             DataTable table = new(name);
 
             foreach (PropertyDescriptor prop in properties)
             {
                 ExcelColumnAttr memberAttr = prop.GetAttribute<ExcelColumnAttr>();
-                table.Columns.Add(memberAttr != null ? memberAttr.DisplayName : prop.Name, Nullable.GetUnderlyingType(prop.PropertyType) ?? prop.PropertyType);
+                SetNameHeader(table, prop, memberAttr);
             }
             foreach (T item in data)
             {
@@ -34,6 +34,11 @@ namespace SimpleExcelGenerator.Helper
                 table.Rows.Add(row);
             }
             return table;
+        }
+
+        private static DataColumn SetNameHeader(DataTable table, PropertyDescriptor prop, ExcelColumnAttr memberAttr)
+        {
+            return table.Columns.Add(memberAttr != null ? memberAttr.DisplayName : prop.Name, Nullable.GetUnderlyingType(prop.PropertyType) ?? prop.PropertyType);
         }
 
         public static T GetAttribute<T>(this PropertyDescriptor prop) where T : Attribute

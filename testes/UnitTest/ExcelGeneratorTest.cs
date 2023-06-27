@@ -103,7 +103,7 @@ namespace UnitTest
 
             var excelGenerator = new ExcelGenerator(new ExecutionControlTime());
 
-            await Assert.ThrowsAsync<ArgumentException>(async () => await excelGenerator.GenerateAsync()); 
+            await Assert.ThrowsAsync<SimpleExcelCustomException>(async () => await excelGenerator.GenerateAsync()); 
         }
 
         [Fact]
