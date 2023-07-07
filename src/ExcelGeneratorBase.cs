@@ -4,6 +4,7 @@ using SimpleExcelGenerator.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace SimpleExcelGenerator
@@ -29,6 +30,8 @@ namespace SimpleExcelGenerator
                 {
                     var (nameTable, data) = configData;
 
+                    if (data is null || (data != null && !data.Any())) continue;
+
                     var dataTableComplete = data.ToDataTable(nameTable);
 
                     _dataSetAllValues.Tables.Add(dataTableComplete);
@@ -45,7 +48,7 @@ namespace SimpleExcelGenerator
         private void ValidExecution()
         {
             if (_dataSetAllValues.Tables.Count == 0)
-                throw new ArgumentException("ExcelGenerator is invalid, not set sheet in instance from this object.");
+                throw new ArgumentException("The content is invalid. At least one sheet needs to be inserted into the spreadsheet in order to generate the file.");
         }
 
         protected async Task<byte[]> ExecuteBaseAsync(Func<Task<byte[]>> action) 

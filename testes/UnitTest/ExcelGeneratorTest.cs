@@ -12,11 +12,21 @@ namespace UnitTest
 
         private readonly Mock<IExecutionControlTime> executionControlTimeMock;
         private readonly Fixture fixture;
+        private readonly ExcelGenerator excelGenerator;
 
         public ExcelGeneratorTest()
         {
             executionControlTimeMock = new();
             fixture = new();
+
+            executionControlTimeMock.Setup(x => x.ExecuteAsync(It.IsAny<Func<Task>>()))
+            .Returns<Func<Task>>(async (action) =>
+            {
+                await action.Invoke();
+                return TimeSpan.FromMilliseconds(2);
+            });
+
+            excelGenerator = new ExcelGenerator(executionControlTimeMock.Object);
         }
 
         [Fact]
@@ -39,7 +49,6 @@ namespace UnitTest
         {
             var nameSheet = fixture.Create<string>();
 
-            var excelGenerator = new ExcelGenerator(executionControlTimeMock.Object);
             excelGenerator.AddSheet(nameSheet, new[] { new { Test = "Test" } }.AsEnumerable());
 
             Assert.Throws<InvalidNameSheetCustomException>(() => excelGenerator.AddSheet(nameSheet, new[] { new { Test = "Test" } }.AsEnumerable()));
@@ -52,7 +61,6 @@ namespace UnitTest
         {
             var nameSheet = fixture.Create<string>();
 
-            var excelGenerator = new ExcelGenerator(new ExecutionControlTime());
             excelGenerator.AddSheet(nameSheet, new[] { new { Test = "Test" } }.AsEnumerable());
 
             var result = await excelGenerator.GenerateAsync();
@@ -69,7 +77,6 @@ namespace UnitTest
         {
             var nameSheet = fixture.Create<string>();
 
-            var excelGenerator = new ExcelGenerator(new ExecutionControlTime());
             excelGenerator.AddSheet(nameSheet, new[] { new { Test = "Test" } }.AsEnumerable());
 
             var result = await excelGenerator.GetBytesAsync();
@@ -112,7 +119,6 @@ namespace UnitTest
             var nameSheet = fixture.Create<string>();
             var nameFile = fixture.Create<Guid>();
 
-            var excelGenerator = new ExcelGenerator(new ExecutionControlTime());
             excelGenerator.AddSheet(nameSheet, new[] { new { Test = "Test" } }.AsEnumerable());
 
             var path = @$"C:\Temp\{nameFile}.xlsx";
@@ -128,7 +134,6 @@ namespace UnitTest
             var nameSheet = fixture.Create<string>();
             var nameFile = fixture.Create<Guid>();
 
-            var excelGenerator = new ExcelGenerator(new ExecutionControlTime());
             excelGenerator.AddSheet(nameSheet, new[] { new { Test = "Test" } }.AsEnumerable());
 
             var path = @$"C:\Temp\{nameFile}.xlsx";
@@ -136,6 +141,33 @@ namespace UnitTest
              excelGenerator.SaveSync(path);
 
             File.ReadAllBytes(path).Should().HaveCountGreaterThan(0);
+        }
+
+        [Fact]
+        public void SaveSync_Generate_Success_ExcelResult_SheetValueNull()
+        {
+            var nameSheet = fixture.Create<string>();
+            var nameSheet2 = fixture.Create<string>();
+            var nameFile = fixture.Create<Guid>();
+
+            excelGenerator.AddSheet(nameSheet, null);
+            excelGenerator.AddSheet(nameSheet2, new[] { new { Test = "Test" } }.AsEnumerable());
+
+            var path = @$"C:\Temp\{nameFile}.xlsx";
+
+            excelGenerator.SaveSync(path);
+
+            File.ReadAllBytes(path).Should().HaveCountGreaterThan(0);
+        }
+
+        [Fact]
+        public async Task GenerateAsync_NotGenerate_Fail_ExcelResult_NotSet_Sheet()
+        {
+            var nameSheet = fixture.Create<string>();
+
+            excelGenerator.AddSheet(nameSheet, null);
+
+            await Assert.ThrowsAsync<SimpleExcelCustomException>(async () => await excelGenerator.GenerateAsync());
         }
     }
 }

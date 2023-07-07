@@ -7,7 +7,7 @@
     <Company>Renan Nunes</Company>
     <Description>Simple wrapper excel generator, based package in MiniExcel</Description>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    <Version>1.0.1</Version>
+    <Version>1.0.2</Version>
     <PackageProjectUrl>https://github.com/RenanCris/SimpleExcelGenerator</PackageProjectUrl>
   </PropertyGroup>
   
