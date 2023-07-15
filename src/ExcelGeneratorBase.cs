@@ -85,8 +85,11 @@ namespace SimpleExcelGenerator
 
         protected virtual void Clear()
         {
-            _dataSetAllValues?.Dispose();
-            ExcelGenerators.Clear();
+            _dataSetAllValues?.Clear();
+            _dataSetAllValues = null;
+
+            ExcelGenerators?.Clear();
+            ExcelGenerators = null;
         }
     }
 }

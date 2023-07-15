@@ -1,0 +1,25 @@
+﻿<?xml version="1.0"?>
+<package>
+  <metadata>
+    <!-- Informações básicas -->
+    <id>SimpleExcelGenerator</id>
+    <version>1.0.3</version>
+    <title>Simple Excel Generator</title>
+    <authors>Renan Nunes</authors>
+    <owners>Renan Nunes</owners>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <Description>Simple wrapper excel generator, based package in MiniExcel</Description>
+    <tags>excel generator library</tags>
+
+
+    <!-- Informações de projeto -->
+    <projectUrl>https://github.com/RenanCris/SimpleExcelGenerator</projectUrl>
+    <repository type="git" url="https://github.com/RenanCris/SimpleExcelGenerator" />
+
+    <!-- Dependências do pacote -->
+    <dependencies>
+      <dependency id="Microsoft.Extensions.DependencyInjection.Abstractions" version="7.0.0" />
+      <dependency id="MiniExcel" version="1.30.0" />
+    </dependencies>
+  </metadata>
+</package>

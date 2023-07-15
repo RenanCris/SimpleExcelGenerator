@@ -65,7 +65,7 @@ namespace UnitTest
 
             var result = await excelGenerator.GenerateAsync();
 
-            excelGenerator.ExcelGenerators.Should().HaveCount(0);
+            excelGenerator.ExcelGenerators.Should().BeNull();
             result.Should().NotBeNull();
             result.Size.Should().BeGreaterThan(0);
             result.Content.Should().HaveCountGreaterThan(0);
@@ -81,7 +81,7 @@ namespace UnitTest
 
             var result = await excelGenerator.GetBytesAsync();
 
-            excelGenerator.ExcelGenerators.Should().HaveCount(0);
+            excelGenerator.ExcelGenerators.Should().BeNull();
             result.Should().NotBeNull();
             result.Should().HaveCountGreaterThan(0);
         }
@@ -96,7 +96,7 @@ namespace UnitTest
 
             var result = excelGenerator.GenerateSync();
 
-            excelGenerator.ExcelGenerators.Should().HaveCount(0);
+            excelGenerator.ExcelGenerators.Should().BeNull();
             result.Should().NotBeNull();
             result.Size.Should().BeGreaterThan(0);
             result.Content.Should().HaveCountGreaterThan(0);

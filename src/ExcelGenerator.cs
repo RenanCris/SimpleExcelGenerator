@@ -127,8 +127,7 @@ namespace SimpleExcelGenerator
             {
                 if (disposing)
                 {
-                    _dataSetAllValues.Dispose();
-                    ExcelGenerators.Clear();
+                    Clear();
                 }
 
                 disposedValue = true;
