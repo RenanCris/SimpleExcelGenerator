@@ -1,0 +1,28 @@
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up .NET
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: '6.0'
+
+      - name: Restore NuGet packages
+        run: dotnet restore
+
+       - name: Extract NuGet package version
+        id: version
+        run: |
+          VERSION=$(grep -oP '<version>\K[^<]+' SimpleExcelGenerator.nuspec)
+          echo "##vso[task.setvariable variable=packageVersion]$VERSION"
+
+      - name: Build and Publish NuGet package
+        run: dotnet build src/SimpleExcelGenerator.csproj--configuration Release --no-restore
+        run: dotnet pack src/SimpleExcelGenerator.csproj --configuration Release --no-build --output ./packages
+
+      - name: Publish NuGet package
+        run: dotnet nuget push ./packages/*.nupkg --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json

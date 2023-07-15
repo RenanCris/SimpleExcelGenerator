@@ -4,7 +4,7 @@ This repository contains the library that provides functionality for wrapping [M
 
 # Package
 
-	NuGet\Install-Package SimpleExcelGenerator -Version 1.0.0
+	NuGet\Install-Package SimpleExcelGenerator -Version 1.0.3
 
 # Usage
 

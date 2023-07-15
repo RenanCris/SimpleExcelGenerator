@@ -12,5 +12,6 @@ namespace SimpleExcelGenerator.Response
         public String SizeToString { get;  set; }
         public TimeSpan TimeGenerate { get;  set; }
         public string ContentBase64 { get;  set; }
+        public string TypeFile { get; set; }
     }
 }

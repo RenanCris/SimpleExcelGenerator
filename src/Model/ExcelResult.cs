@@ -11,6 +11,8 @@ namespace SimpleExcelGenerator.Model
         public TimeSpan TimeGenerate { get; private set; }
         public byte[] Content { get; private set; }
 
+        private const string TypeFile = "xlsx";
+
         public ExcelResult(TimeSpan timeGenerate, byte[] content)
         {
             TimeGenerate = timeGenerate;
@@ -31,7 +33,8 @@ namespace SimpleExcelGenerator.Model
              Size = Size, 
              SizeToString = SizeToString,
              ContentBase64= Convert.ToBase64String(Content),
-             TimeGenerate  = TimeGenerate
+             TimeGenerate  = TimeGenerate,
+             TypeFile = TypeFile
             };
         }
     }
