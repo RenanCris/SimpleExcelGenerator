@@ -22,7 +22,7 @@ jobs:
       - name: Extract NuGet package version
         id: version
         run: |
-          VERSION=$(grep -oP '<version>\K[^<]+' SimpleExcelGenerator.nuspec)
+          VERSION=$(grep -oP '<version>\K[^<]+' src/SimpleExcelGenerator.nuspec)
           echo "##vso[task.setvariable variable=packageVersion]$VERSION"
 
       - name: Build and Publish NuGet package
