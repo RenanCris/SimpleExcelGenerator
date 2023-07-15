@@ -1,7 +1,12 @@
+name: "Build Publish"
+
+on:
+  pull_request:
+    branches: [main]
+
 jobs:
   build:
     runs-on: ubuntu-latest
-    
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
@@ -14,7 +19,7 @@ jobs:
       - name: Restore NuGet packages
         run: dotnet restore
 
-       - name: Extract NuGet package version
+      - name: Extract NuGet package version
         id: version
         run: |
           VERSION=$(grep -oP '<version>\K[^<]+' SimpleExcelGenerator.nuspec)
@@ -22,6 +27,8 @@ jobs:
 
       - name: Build and Publish NuGet package
         run: dotnet build src/SimpleExcelGenerator.csproj--configuration Release --no-restore
+      
+      - name: Pack NuGet package  
         run: dotnet pack src/SimpleExcelGenerator.csproj --configuration Release --no-build --output ./packages
 
       - name: Publish NuGet package
