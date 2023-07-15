@@ -27,7 +27,7 @@ jobs:
 
       - name: Build and Publish NuGet package
         run: dotnet build src/SimpleExcelGenerator.csproj--configuration Release --no-restore
-      
+
       - name: Pack NuGet package  
         run: dotnet pack src/SimpleExcelGenerator.csproj --configuration Release --no-build --output ./packages
 
